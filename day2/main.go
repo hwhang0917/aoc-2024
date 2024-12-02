@@ -8,7 +8,7 @@ import (
 	"github.com/hwhang0917/aoc-2024/pkg/utils"
 )
 
-func checkIsSafe(report []int) bool {
+func isSafe(report []int) bool {
 	isIncreasing := report[1] > report[0]
 	for i := 1; i < len(report); i++ {
 		if report[i] == report[i-1] {
@@ -24,13 +24,17 @@ func checkIsSafe(report []int) bool {
 	return true
 }
 
+func problemDampener(report []int, idx int) []int {
+    return slices.Concat(report[:idx], report[idx+1:])
+}
+
 func main() {
-	input := utils.ReadDayTwoInput(false)
+	input := utils.ReadDayTwoInput(true)
 
 	// Part I
 	safeCount := 0
 	for _, report := range input.Reports {
-		if checkIsSafe(report) {
+		if isSafe(report) {
 			safeCount++
 		}
 	}
@@ -39,8 +43,9 @@ func main() {
 	// Part II
 	safeCount = 0
 	for _, report := range input.Reports {
-		for i := range report {
-			if checkIsSafe(slices.Concat(report[:i], report[i+1:])) {
+		for idx := range report {
+            reportSlice := problemDampener(report, idx)
+			if isSafe(reportSlice) {
 				safeCount++
 				break
 			}

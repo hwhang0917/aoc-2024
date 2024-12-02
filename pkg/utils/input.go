@@ -23,7 +23,7 @@ func ReadDayOneInput(testing bool) DayOneInput {
     }
     file, err := os.Open(filename)
     if err != nil {
-        log.Fatal("Cannot read %s: %v", filename, err)
+        log.Fatalf("Cannot read %s: %v", filename, err)
     }
     defer file.Close()
 
@@ -44,18 +44,18 @@ func ReadDayOneInput(testing bool) DayOneInput {
         leftStr, rightStr := line[0], line[1]
         left, err := strconv.Atoi(leftStr)
         if err != nil {
-            log.Fatal("Cannot convert %s to int: %v", leftStr, err)
+            log.Fatalf("Cannot convert %s to int: %v", leftStr, err)
         }
         right, err := strconv.Atoi(rightStr)
         if err != nil {
-            log.Fatal("Cannot convert %s to int: %v", rightStr, err)
+            log.Fatalf("Cannot convert %s to int: %v", rightStr, err)
         }
         dayOneInput.LeftColumn = append(dayOneInput.LeftColumn, left)
         dayOneInput.RightColumn = append(dayOneInput.RightColumn, right)
         dayOneInput.Lines++
     }
     if err := scanner.Err(); err != nil {
-        log.Fatal("Cannot scan %s: %v", filename, err)
+        log.Fatalf("Cannot scan %s: %v", filename, err)
     }
     return dayOneInput
 }
@@ -73,7 +73,7 @@ func ReadDayTwoInput(testing bool) DayTwoInput {
     }
     file, err := os.Open(filename)
     if err != nil {
-        log.Fatal("Cannot read %s: %v", filename, err)
+        log.Fatalf("Cannot read %s: %v", filename, err)
     }
     defer file.Close()
 
@@ -94,7 +94,7 @@ func ReadDayTwoInput(testing bool) DayTwoInput {
         for _, numStr := range lineString {
             num, err := strconv.Atoi(numStr)
             if err != nil {
-                log.Fatal("Cannot convert %s to int: %v", numStr, err)
+                log.Fatalf("Cannot convert %s to int: %v", numStr, err)
             }
             line = append(line, num)
         }
