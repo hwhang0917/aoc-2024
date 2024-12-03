@@ -103,3 +103,24 @@ func ReadDayTwoInput(testing bool) DayTwoInput {
     }
     return dayTwoInput
 }
+
+func ReadDayThreeInput(testing bool) string {
+    filename := "input/day3.txt"
+    if testing {
+        filename = "input/day3_test.txt"
+    }
+    file, err := os.Open(filename)
+    if err != nil {
+        log.Fatalf("Cannot read %s: %v", filename, err)
+    }
+    defer file.Close()
+
+    dayThreeInput := ""
+
+    scanner := bufio.NewScanner(file)
+    scanner.Split(bufio.ScanLines)
+    for scanner.Scan() {
+        dayThreeInput = strings.Join([]string{dayThreeInput, scanner.Text()}, "")
+    }
+    return dayThreeInput
+}
