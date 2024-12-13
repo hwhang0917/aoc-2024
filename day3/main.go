@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -21,56 +22,89 @@ func isNumericAscii(asciiValue int) bool {
 
 func main() {
 	input := utils.ReadDayThreeInput(false)
-    solution := 0
-	point := 0
-	for point < len([]rune(input)) {
-		inputUpToMul := input[point:]
-        nextMul := strings.Index(inputUpToMul, "mul(")
-        if nextMul == -1 {
-            break
-        }
-		point += nextMul + MUL_OFFSET
+	solution := 0
+	pointer := 0
+	for pointer < len([]rune(input)) {
+		inputUpToMul := input[pointer:]
+		nextMul := strings.Index(inputUpToMul, "mul(")
+		if nextMul == -1 {
+			break
+		}
+		pointer += nextMul + MUL_OFFSET
 
-        numbers := []int{}
+		numbers := []int{}
 		numericString := ""
 		for {
-			asciiValue := int(input[point])
+			asciiValue := int(input[pointer])
 			asciiText := string(rune(asciiValue))
-			point++
+			pointer++
 			if asciiText == ")" {
 				break
 			}
 			if isNumericAscii(asciiValue) {
 				numericString = strings.Join([]string{numericString, asciiText}, "")
 			} else if asciiValue == COMMA_ASCII {
-                num, err := strconv.Atoi(numericString)
-                if err != nil {
-                    log.Fatal("Not a numeric string")
-                    break
-                }
-                numbers = append(numbers, num)
+				num, err := strconv.Atoi(numericString)
+				if err != nil {
+					log.Fatal("Not a numeric string")
+					break
+				}
+				numbers = append(numbers, num)
 				numericString = ""
 			} else if asciiValue == END_PARENTHESIS_ASCII {
 				break
 			} else {
-                numericString = ""
-                break
-            }
+				numericString = ""
+				break
+			}
 		}
-        if numericString != "" {
-            num, err := strconv.Atoi(numericString)
-            if err != nil {
-                log.Fatal("Not a numeric string")
-                break
-            }
-            numbers = append(numbers, num)
-            numericString = ""
-        }
-        if len(numbers) == 2 {
-            mulResult := numbers[0] * numbers[1]
-            fmt.Printf("mul(%d,%d) = %d\n", numbers[0], numbers[1], mulResult)
-            solution += mulResult
-        }
+		if numericString != "" {
+			num, err := strconv.Atoi(numericString)
+			if err != nil {
+				log.Fatal("Not a numeric string")
+				break
+			}
+			numbers = append(numbers, num)
+			numericString = ""
+		}
+		if len(numbers) == 2 {
+			mulResult := numbers[0] * numbers[1]
+			solution += mulResult
+		}
 	}
-    fmt.Printf("PART I solution: %d", solution)
+	fmt.Printf("PART I solution: %d\n", solution)
+
+	type operation struct {
+		Name     string
+		Position int
+	}
+
+	// Reset for Part II
+	solution = 0
+	r := regexp.MustCompile(`(mul\((\d+),(\d+)\)|do\(\)|don't\(\))`)
+	matches := r.FindAllStringSubmatch(input, -1)
+	enabled := true
+	for _, match := range matches {
+		switch match[0] {
+		case "do()":
+			enabled = true
+		case "don't()":
+			enabled = false
+		default:
+			if enabled {
+				first, err := strconv.Atoi(match[2])
+				if err != nil {
+					log.Fatal("Not a numeric string")
+					break
+				}
+				second, err := strconv.Atoi(match[3])
+				if err != nil {
+					log.Fatal("Not a numeric string")
+					break
+				}
+				solution += first * second
+			}
+		}
+	}
+	fmt.Printf("PART II solution: %d\n", solution)
 }
